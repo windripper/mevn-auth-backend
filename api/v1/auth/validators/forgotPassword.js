@@ -10,9 +10,10 @@ const ForgotPasswordSchema = Yup.object().shape({
 module.exports = async (ctx, next) => {
     try {
 
-        await ForgotPasswordSchema.validate(ctx.request.body);
-
         const { email } = ctx.request.body;
+        await ForgotPasswordSchema.validate({ email });
+
+
         const user = await User.findOne({ email });
 
         if (!user) {
@@ -35,11 +36,11 @@ module.exports = async (ctx, next) => {
 
         ctx.user = user;
 
-        next();
+        return next();
     } catch(error) {
         ctx.status = 422;
         ctx.body = ({
             [error.path]: error.message
         });
     }
-}
+};
